@@ -54,8 +54,6 @@ def main():
 
     # info = sol.bodies[1].returnCurrentBodyInfo()
     # jsonPrint(info)
-
-
     sol.startSim(length=sim_length, interval=sim_interval)
 
     plotter = dataPlot(system=sol)
