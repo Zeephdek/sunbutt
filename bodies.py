@@ -50,6 +50,8 @@ class system():
 
     # def sim
     def startSim(self, length, interval): 
+        debugL = 1400*22323233434
+
         self.T = length
         self.dt = interval
 
@@ -58,16 +60,21 @@ class system():
 
         self.t = 0
         n_iter = int(self.T / self.dt)
-        self.t_arr = np.zeros([n_iter])
+        if debugL > n_iter:
+            self.t_arr = np.zeros([n_iter+1])
+        else:
+            self.t_arr = np.zeros([debugL+1])
 
         for n in range(n_iter):
-            if n == 55566:
-                break
-
-            msgMain = f"\nSim iteration {n+1}/{n_iter} | t={self.t}s"
+            if n == debugL:
+                break   
+            
+            msgMain = f"Sim iteration {n+1}/{n_iter} | t={self.t}s"
             print(msgMain)
 
-            self.sim()      
+            self.t_arr[n] = self.t
+            self.sim()   
+            
 
     def sim(self):
         self.calcGravAll()
@@ -76,9 +83,9 @@ class system():
             dv = body.acc_cart * self.dt
             ds = body.vel_cart * self.dt
 
-            if body.name == "earth":
+            if body.name == "asdsdsdsdsds":
+                printSph(body.acc_sphr)
                 body.printDetailedInfo()
-                printSph(getSphr(ds))
             
             body.vel_cart = body.vel_cart + dv
             body.pos_cart = body.pos_cart + ds
@@ -113,7 +120,8 @@ class system():
                         r=getDistance(self.bodies[idx].pos_cart, self.bodies[idy].pos_cart))
                     forces[idx,idy] = a
                     forces[idy,idx] = a
-        
+
+        # print(forces)
 
         #summing forces
         force_result = np.zeros([self.bodycount, 3])
@@ -128,9 +136,12 @@ class system():
 
             force_result[idx] += force_cart
 
+        # print(force_result)
+
         for i, body in enumerate(self.bodies):
             body.acc_cart = force_result[i] / body.mass
-            body.acc_sphr = getSphr(force_result[i]) / body.mass
+            body.acc_sphr = getSphr(body.acc_cart) 
+            
 
 class body():
     def __init__(self, mass, name, pos_cart, pos_sphr, vel_cart, vel_sphr, acc_cart, acc_sphr) -> None:
@@ -182,7 +193,7 @@ class body():
         }
 
     def printDetailedInfo(self):
-        msg = f"\nPosition: {self.pos_cart} | distance to sun: {self.pos_sphr[0]}\n"
+        msg = f"\nPosition: {self.pos_cart} | "+"distance to sun: {:.4E}\n".format(self.pos_sphr[0])
         msg2 = f"Elevation: {np.degrees(self.pos_sphr[1])}° | Azimuth: {np.degrees(self.pos_sphr[2])}°\n"
         msg3 = f"Speed: {self.vel_sphr[0]}m/s\n"
         

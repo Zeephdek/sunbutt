@@ -25,7 +25,7 @@ def getSphr(cart=triEmptyArray):
 
 def printSph(sph):
     r, theta, phi = sph[0], np.degrees(sph[1]), np.degrees(sph[2])
-    print("r = {:.1f} | θ = {:.3f} | φ = {:.3f}".format(r, theta, phi))
+    print("r = {:.4E} | θ = {:.3f} | φ = {:.3f}".format(r, theta, phi))
 
 def getCart(sph=triEmptyArray):
     """

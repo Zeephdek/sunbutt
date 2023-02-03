@@ -18,3 +18,7 @@ earth_e = 0.0167086
 earth_r_mean = 6.371E6
 
 ## Moon
+moon_mass = 7.342E22
+moon_Ap = 4.054E8
+moon_Pe = 3.632289E8
+moon_spd_avr = 1.022E3

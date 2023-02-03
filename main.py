@@ -32,7 +32,7 @@ Assumptions for Fucking simplicity's sake.
 """
 
 sim_length = 365*24*3600
-sim_interval = 1*3600
+sim_interval = 0.1001*24*3600/25
 
 
 def main():
@@ -51,13 +51,26 @@ def main():
             np.radians(90-earth_incl),
             np.radians(90.0000000001))
         )
+    sol.createBody(
+        name="moon", mass=moon_mass,
+        pos_sphr=(
+            earth_Pe-moon_Pe,
+            np.radians(90.000000001),
+            0),
+        vel_sphr=(
+            earth_spd_Pe-moon_spd_avr,
+            np.radians(90-earth_incl),
+            np.radians(90.0000000001))
+        )
+    
 
     # info = sol.bodies[1].returnCurrentBodyInfo()
     # jsonPrint(info)
     sol.startSim(length=sim_length, interval=sim_interval)
 
     plotter = dataPlot(system=sol)
-    plotter.plotPaths()
+    # plotter.plotPaths()
+    plotter.plotData()
 
 
 if __name__ == "__main__":
