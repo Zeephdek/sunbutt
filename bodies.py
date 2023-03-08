@@ -49,14 +49,13 @@ class system():
         )
 
     # def sim
-    def startSim(self, length, interval): 
+    def startSim(self, length, interval, iteration_print_interval=100): 
         debugL = 1400*22323233434
 
         self.T = length
         self.dt = interval
 
         self.bodycount = len(self.bodies)
-
 
         self.t = 0
         n_iter = int(self.T / self.dt)
@@ -69,10 +68,11 @@ class system():
             if n == debugL:
                 break   
             
-            msgMain = f"Sim iteration {n+1}/{n_iter} | t={self.t}s"
-            print(msgMain)
+            if n % iteration_print_interval == 0:
+                msgMain = f"Sim iteration {n}/{n_iter}"+" | t={:.3E}s".format(self.t)
+                print(msgMain)
 
-            self.t_arr[n] = self.t
+            self.t_arr[n+1] = self.t
             self.sim()   
             
 
@@ -112,7 +112,6 @@ class system():
             for y in j:
                 idy = j.index
                 if idx < idy:
-                    
                     # time to calculate gravitational force
                     a = g_force(
                         G=G, 
@@ -170,7 +169,6 @@ class body():
         self.vel_sphr = vel_sphr
         self.acc_cart = acc_cart
         self.acc_sphr = acc_sphr
-
 
         self.pos_cart_arr = np.reshape(pos_cart, (1,3))
         self.pos_sphr_arr = np.reshape(pos_sphr, (1,3))

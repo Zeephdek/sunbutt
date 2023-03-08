@@ -1,5 +1,6 @@
 import numpy as np
 import json
+import time
 
 global triEmptyArray
 triEmptyArray = np.zeros([3])
@@ -69,3 +70,31 @@ def jsonPrint(data, print_data=True):
 ### gravity calculations
 def g_force(G, m_1, m_2, r):
     return G * m_1 * m_2 / (r**2)
+
+## stopwatch.
+class stopwatch():
+    """
+    a stopwatch. That's it.
+    All ya need to know.
+
+    it returns the times since each lap as a list in seconds
+    with the first instance being since init of the stopwatch
+    """
+    def __init__(self) -> None:
+        self.startTimes = []
+        self.startTimes.append(time.time())
+
+    def lap(self):
+        self.startTimes.append(time.time())
+        return True # why? Idk.
+
+    def getTimePassed(self):
+        timePassed = list(
+            time.time() - t for t in self.startTimes
+        )
+            
+        return timePassed 
+
+    def getTimePassedStart(self):
+        # simplified version: since the start -> returns float, not list.
+        return float(time.time() - self.startTimes[0])

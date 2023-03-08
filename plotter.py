@@ -4,6 +4,34 @@ import numpy as np
 
 from matplotlib import colors
 
+def turningPointsIneff(x, y):
+    " the  shit recursive method "
+    i = np.nditer(y, flags=["c_index"], op_flags=[["readwrite"]])
+    prev = 0
+    up = 1
+    prev_up = 1
+    
+    res_x = []
+    res_y = []
+
+    for f in i:
+        # force on x by y
+        index = i.index
+        if index != 0:
+            if y[index] < prev:
+                up = 0
+            else:
+                up = 1
+
+            if up != prev_up:
+                res_y.append(y[index])
+                res_x.append(x[index])
+
+            prev = y[index]
+            prev_up = int(up)
+
+    return res_x, res_y
+
 def set_axes_equal(ax):
     '''Make axes of 3D plot have equal scale so that spheres appear as spheres,
     cubes as cubes, etc..  This is one possible solution to Matplotlib's
@@ -127,3 +155,89 @@ class dataPlot():
 
             fig.show()
             input()
+
+    def superPlot(self):
+
+        fig=plt.figure(figsize=(12,9))
+
+        fig.suptitle("<3") 
+
+        ax1=fig.add_subplot(221, projection='3d')
+        ax2=fig.add_subplot(222)
+        ax3=fig.add_subplot(223)
+
+        ax1.set_title("Orbits")
+        ax2.set_title("Radii")
+        ax3.set_title("Earth-Moon Distances")
+
+        # calc distances
+        l_vec = self.s.bodies[1].pos_cart_arr - self.s.bodies[2].pos_cart_arr
+        length = np.sqrt(l_vec[:,0]**2+ l_vec[:,1]**2+ l_vec[:,2]**2)
+
+        for i, body in enumerate(self.s.bodies):
+            # print(body.pos_cart_arr[:,0])
+            if body.name == "sun":
+                # continue
+                ax1.plot3D(
+                    body.pos_cart_arr[:,0], 
+                    body.pos_cart_arr[:,1], 
+                    body.pos_cart_arr[:,2], 
+                    linewidth=0.1,
+                    marker="o", markersize=6, color="orange", label=body.name
+                )
+            elif body.name == "earth":
+                ax1.plot3D(
+                    body.pos_cart_arr[:,0], 
+                    body.pos_cart_arr[:,1], 
+                    body.pos_cart_arr[:,2], 
+                    linewidth=0.7,
+                    marker="o", markersize=0.7, color="blue", label=body.name
+                )
+            else:
+                ax1.plot3D(
+                    body.pos_cart_arr[:,0], 
+                    body.pos_cart_arr[:,1], 
+                    body.pos_cart_arr[:,2], 
+                    linewidth=0.45,
+                    marker="o", markersize=0.45, label=body.name
+                )
+
+            if i != 0:
+                radius = np.sqrt(body.pos_cart_arr[:,0]**2+ body.pos_cart_arr[:,1]**2+ body.pos_cart_arr[:,2]**2)
+                ax2.plot(self.s.t_arr/24/3600, radius, label=body.name)
+
+                tp = turningPointsIneff(self.s.t_arr/24/3600, radius)
+                ax2.scatter(tp[0], tp[1], color='r', zorder=2)
+
+                for i, x in enumerate(tp[0]):
+                    ax2.annotate("{:.1f}".format(x), (tp[0][i], tp[1][i]))
+        
+
+        ax3.plot(self.s.t_arr/24/3600, length)
+        ax3.set_xlabel("n")
+        ax3.set_ylabel("Earth-Moon Distance/m")
+
+        tp = turningPointsIneff(self.s.t_arr/24/3600, length)
+        ax3.scatter(tp[0], tp[1], color='r', zorder=2)
+
+        for i, x in enumerate(tp[0]):
+            ax3.annotate("{:.1f}".format(x), (tp[0][i], tp[1][i]))
+
+        set_axes_equal(ax1)
+
+        ax1.set_xlabel("X")
+        ax1.set_ylabel("Y")
+        ax1.set_zlabel("Z")    
+
+        ax2.set_xlabel("t/days")  
+        ax2.set_ylabel("r/m")  
+
+        ax1.legend()
+        ax2.legend()
+
+        ## CALC ADDITIONAL DATA/
+
+
+        fig.show()
+        input()
+
